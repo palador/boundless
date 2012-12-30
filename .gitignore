@@ -1,7 +1,9 @@
 $ cat .gitignore
 
+*.so
 .classpath
 .eclipse
 .project
+hs_err*
 .settings/**
 target/**

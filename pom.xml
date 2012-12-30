@@ -13,6 +13,16 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.1</version>
+		</dependency>
+		<dependency>
 			<groupId>com.jme3</groupId>
 			<artifactId>jME3-jogg</artifactId>
 			<version>3.0.120916</version>
@@ -75,6 +85,16 @@
 		<dependency>
 			<groupId>com.jme3</groupId>
 			<artifactId>jME3-lwjgl-natives</artifactId>
+			<version>3.0.120916</version>
+		</dependency>
+		<dependency>
+			<groupId>com.jme3</groupId>
+			<artifactId>vecmath</artifactId>
+			<version>3.0.120916</version>
+		</dependency>
+		<dependency>
+			<groupId>com.jme3</groupId>
+			<artifactId>jbullet</artifactId>
 			<version>3.0.120916</version>
 		</dependency>
 		<dependency>
