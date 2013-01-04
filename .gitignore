@@ -7,3 +7,8 @@ $ cat .gitignore
 hs_err*
 .settings/**
 target/**
+baseq3/**
+missionpack/**
+docs/**
+data/maps/**
+!data/maps/*.map
