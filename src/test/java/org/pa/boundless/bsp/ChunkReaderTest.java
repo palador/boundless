@@ -3,7 +3,6 @@ package org.pa.boundless.bsp;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -51,7 +50,7 @@ public class ChunkReaderTest {
 		buf.putInt(42);
 
 		ChunkReader<Brush> reader = new ChunkReader<>(Brush.class);
-		Brush brush = reader.loadChunk(new ByteArrayInputStream(bytes));
+		Brush brush = reader.loadChunk(ByteBuffer.wrap(bytes));
 		assertEquals(brush.brushside, 10);
 		assertEquals(brush.n_brushsides, Integer.MIN_VALUE);
 		assertEquals(brush.texture, 42);
@@ -72,7 +71,7 @@ public class ChunkReaderTest {
 		}
 
 		ChunkReader<Lightmap> reader = new ChunkReader<>(Lightmap.class);
-		Lightmap lightmap = reader.loadChunk(new ByteArrayInputStream(bytes));
+		Lightmap lightmap = reader.loadChunk(ByteBuffer.wrap(bytes));
 
 		assertTrue(Arrays.deepEquals(lightmap.map, lightmapdata));
 	}
@@ -96,7 +95,7 @@ public class ChunkReaderTest {
 		buf.putInt(1002);
 
 		ChunkReader<Node> reader = new ChunkReader<>(Node.class);
-		Node node = reader.loadChunk(new ByteArrayInputStream(bytes));
+		Node node = reader.loadChunk(ByteBuffer.wrap(bytes));
 
 		assertEquals(node.plane, 42);
 		assertEqualsIntArr(node.children, 10, 11);

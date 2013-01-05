@@ -3,15 +3,11 @@ package org.pa.boundless.bsp;
 import static org.apache.commons.lang3.Validate.isTrue;
 import static org.apache.commons.lang3.Validate.notNull;
 
-import java.io.EOFException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -29,7 +25,6 @@ public class ChunkReader<T> {
 	private static final HashSet<Class<?>> VALID_FIELD_TYPES = new HashSet<>(
 			Arrays.asList((Class<?>) int.class, char.class, float.class,
 					byte.class));
-	private static final Charset USASCII = Charset.forName("US-ASCII");
 
 	private final Class<T> type;
 	private final int chunkLength;
@@ -120,7 +115,7 @@ public class ChunkReader<T> {
 		return chunkLength;
 	}
 
-	public T loadChunk(InputStream is) throws IOException {
+	public T loadChunk(ByteBuffer is) throws IOException {
 		T result;
 		try {
 			result = type.newInstance();
@@ -156,34 +151,24 @@ public class ChunkReader<T> {
 	 * @return
 	 * @throws IOException
 	 */
-	private static Object loadValue(InputStream is, Class<?> fieldType)
+	private static Object loadValue(ByteBuffer buf, Class<?> fieldType)
 			throws IOException {
-		byte[] buf = new byte[sizeof(fieldType)];
-		if (is.read(buf) != buf.length) {
-			throw new EOFException("not enougth bytes to read " + fieldType);
-		}
-
 		Object value = null;
 		if (fieldType == byte.class) {
-			value = buf[0];
-		} else {
-			// use bytebuffer to read primitive types other than byte
-			ByteBuffer byteBuf = ByteBuffer.wrap(buf).order(
-					ByteOrder.LITTLE_ENDIAN);
-
-			if (fieldType == char.class) {
-				value = USASCII.decode(byteBuf).get();
-			} else if (fieldType == int.class) {
-				value = byteBuf.getInt();
-			} else if (fieldType == float.class) {
-				value = byteBuf.getFloat();
-			}
+			value = buf.get();
+		} else if (fieldType == char.class) {
+			value = (char) buf.get();
+		} else if (fieldType == int.class) {
+			value = buf.getInt();
+		} else if (fieldType == float.class) {
+			value = buf.getFloat();
 		}
+
 		return value;
 	}
 
 	private static interface FieldLoader {
-		void loadField(InputStream is, Object obj) throws IOException;
+		void loadField(ByteBuffer buf, Object obj) throws IOException;
 	}
 
 	private static class SimpleFieldLoader implements FieldLoader {
@@ -195,9 +180,9 @@ public class ChunkReader<T> {
 		}
 
 		@Override
-		public void loadField(InputStream is, Object obj) throws IOException {
+		public void loadField(ByteBuffer buf, Object obj) throws IOException {
 			try {
-				field.set(obj, loadValue(is, field.getType()));
+				field.set(obj, loadValue(buf, field.getType()));
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}
@@ -224,7 +209,7 @@ public class ChunkReader<T> {
 		}
 
 		@Override
-		public void loadField(InputStream is, Object obj) throws IOException {
+		public void loadField(ByteBuffer buf, Object obj) throws IOException {
 			Object array;
 			try {
 				array = field.get(obj);
@@ -250,7 +235,7 @@ public class ChunkReader<T> {
 					primitiveArray = Array.get(primitiveArray, index);
 				}
 
-				Object elementValue = loadValue(is, arrayType);
+				Object elementValue = loadValue(buf, arrayType);
 				Array.set(primitiveArray, element
 						% dimensionLengths[dimensionLengths.length - 1],
 						elementValue);
