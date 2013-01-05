@@ -224,9 +224,6 @@ public class ChunkReader<T> {
 
 			for (int element = 0; element < totalElements; element++) {
 				Object primitiveArray = array;
-				if (element == 384) {
-					System.out.println("OM");
-				}
 				for (int dim = 0; dim < dimensionLengths.length - 1; dim++) {
 					// fancy: convert element index to index of the current
 					// dimension
