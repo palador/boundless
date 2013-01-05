@@ -133,6 +133,14 @@ public class BspFile extends Chunk {
 	public Effect[] effects;
 
 	/**
+	 * The meshverts lump stores lists of vertex offsets, used to describe
+	 * generalized triangle meshes. There are a total of length /
+	 * sizeof(meshvert) records in the lump, where length is the size of the
+	 * lump itself, as specified in the lump directory.
+	 */
+	public int[] meshverts;
+
+	/**
 	 * The faces lump stores information used to render the surfaces of the map.
 	 * There are a total of length / sizeof(faces) records in the lump, where
 	 * length is the size of the lump itself, as specified in the lump
