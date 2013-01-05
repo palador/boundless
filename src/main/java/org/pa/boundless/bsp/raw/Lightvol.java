@@ -25,13 +25,13 @@ public class Lightvol {
 	/**
 	 * Ambient color component. RGB.
 	 */
-	byte[] ambient = new byte[3];
+	public final byte[] ambient = new byte[3];
 	/**
 	 * Directional color component. RGB.
 	 */
-	byte[] directional = new byte[3];
+	public final byte[] directional = new byte[3];
 	/**
 	 * Direction to light. 0=phi, 1=theta.
 	 */
-	byte[] dir = new byte[2];
+	public final byte[] dir = new byte[2];
 }

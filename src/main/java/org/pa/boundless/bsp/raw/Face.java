@@ -74,57 +74,57 @@ public class Face {
 	/**
 	 * Texture index.
 	 */
-	int texture;
+	public int texture;
 	/**
 	 * Index into lump 12 (Effects), or -1.
 	 */
-	int effect;
+	public int effect;
 	/**
 	 * Face type. 1=polygon, 2=patch, 3=mesh, 4=billboard
 	 */
-	int type;
+	public int type;
 	/**
 	 * Index of first vertex.
 	 */
-	int vertex;
+	public int vertex;
 	/**
 	 * Number of vertices.
 	 */
-	int n_vertexes;
+	public int n_vertexes;
 	/**
 	 * Index of first meshvert.
 	 */
-	int meshvert;
+	public int meshvert;
 	/**
 	 * Number of meshverts.
 	 */
-	int n_meshverts;
+	public int n_meshverts;
 	/**
 	 * Lightmap index.
 	 */
-	int lm_index;
+	public int lm_index;
 	/**
 	 * Corner of this face's lightmap image in lightmap.
 	 */
-	int[] lm_start;
+	public int[] lm_start;
 	/**
 	 * Size of this face's lightmap image in lightmap.
 	 */
-	int[] lm_size;
+	public int[] lm_size;
 	/**
 	 * World space origin of lightmap.
 	 */
-	float[] lm_origin;
+	public float[] lm_origin;
 	/**
 	 * World space lightmap s and t unit vectors.
 	 */
-	float[] lm_vecs;
+	public float[] lm_vecs;
 	/**
 	 * Surface normal.
 	 */
-	float[] normal;
+	public float[] normal;
 	/**
 	 * Patch dimensions.
 	 */
-	int[] size;
+	public int[] size;
 }

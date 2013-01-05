@@ -7,10 +7,10 @@ public class DirEntry {
 	/**
 	 * Offset to start of lump, relative to beginning of file.
 	 */
-	int offset;
+	public int offset;
 
 	/**
 	 * Length of lump. Always a multiple of 4.
 	 */
-	int length;
+	public int length;
 }

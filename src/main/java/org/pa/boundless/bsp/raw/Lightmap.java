@@ -10,5 +10,5 @@ public class Lightmap {
 	/**
 	 * Lightmap color data. RGB.
 	 */
-	byte[][][] map = new byte[128][128][3];
+	public final byte[][][] map = new byte[128][128][3];
 }

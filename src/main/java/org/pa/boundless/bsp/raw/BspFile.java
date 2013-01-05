@@ -13,7 +13,7 @@ public class BspFile {
 	/**
 	 * The header of the BspFile.
 	 */
-	Header header;
+	public Header header;
 
 	/**
 	 * The entities lump stores game-related map information, including
@@ -29,7 +29,7 @@ public class BspFile {
 	 * about entity descriptions, see the documentation to Q3Radiant, the Quake
 	 * 3 level editor.
 	 */
-	char[] entities;
+	public char[] entities;
 
 	/**
 	 * The textures lump stores information about surfaces and volumes, which
@@ -37,7 +37,7 @@ public class BspFile {
 	 * total of length / sizeof(texture) records in the lump, where length is
 	 * the size of the lump itself, as specified in the lump directory.
 	 */
-	Texture[] textures;
+	public Texture[] textures;
 
 	/**
 	 * The planes lump stores a generic set of planes that are in turn
@@ -48,7 +48,7 @@ public class BspFile {
 	 * Note that planes are paired. The pair of planes with indices i and i ^ 1
 	 * are coincident planes with opposing normals.
 	 */
-	Plane[] planes;
+	public Plane[] planes;
 
 	/**
 	 * The nodes lump stores all of the nodes in the map's BSP tree. The BSP
@@ -58,7 +58,7 @@ public class BspFile {
 	 * the lump, where length is the size of the lump itself, as specified in
 	 * the lump directory.
 	 */
-	Node[] nodes;
+	public Node[] nodes;
 
 	/**
 	 * The leafs lump stores the leaves of the map's BSP tree. Each leaf is a
@@ -69,7 +69,7 @@ public class BspFile {
 	 * lump, where length is the size of the lump itself, as specified in the
 	 * lump directory.
 	 */
-	Leaf[] leafs;
+	public Leaf[] leafs;
 
 	/**
 	 * The leaffaces lump stores lists of face indices, with one list per leaf.
@@ -77,7 +77,7 @@ public class BspFile {
 	 * length is the size of the lump itself, as specified in the lump
 	 * directory.
 	 */
-	int[] leaffaces;
+	public int[] leaffaces;
 
 	/**
 	 * The leafbrushes lump stores lists of brush indices, with one list per
@@ -85,7 +85,7 @@ public class BspFile {
 	 * lump, where length is the size of the lump itself, as specified in the
 	 * lump directory.
 	 */
-	int[] leafbrushes;
+	public int[] leafbrushes;
 
 	/**
 	 * The models lump describes rigid groups of world geometry. The first model
@@ -98,7 +98,7 @@ public class BspFile {
 	 * records in the lump, where length is the size of the lump itself, as
 	 * specified in the lump directory.
 	 */
-	Model[] models;
+	public Model[] models;
 
 	/**
 	 * The brushes lump stores a set of brushes, which are in turn used for
@@ -107,7 +107,7 @@ public class BspFile {
 	 * records in the lump, where length is the size of the lump itself, as
 	 * specified in the lump directory.
 	 */
-	Brush[] brushes;
+	public Brush[] brushes;
 
 	/**
 	 * The brushsides lump stores descriptions of brush bounding surfaces. There
@@ -115,14 +115,14 @@ public class BspFile {
 	 * length is the size of the lump itself, as specified in the lump
 	 * directory.
 	 */
-	Brushside[] brushsides;
+	public Brushside[] brushsides;
 
 	/**
 	 * The vertexes lump stores lists of vertices used to describe faces. There
 	 * are a total of length / sizeof(vertex) records in the lump, where length
 	 * is the size of the lump itself, as specified in the lump directory.
 	 */
-	Vertex[] vertices;
+	public Vertex[] vertices;
 
 	/**
 	 * The effects lump stores references to volumetric shaders (typically fog)
@@ -130,7 +130,7 @@ public class BspFile {
 	 * total of length / sizeof(effect) records in the lump, where length is the
 	 * size of the lump itself, as specified in the lump directory.
 	 */
-	Effect[] effects;
+	public Effect[] effects;
 
 	/**
 	 * The faces lump stores information used to render the surfaces of the map.
@@ -138,7 +138,7 @@ public class BspFile {
 	 * length is the size of the lump itself, as specified in the lump
 	 * directory.
 	 */
-	Face[] faces;
+	public Face[] faces;
 
 	/**
 	 * The lightmaps lump stores the light map textures used make surface
@@ -146,7 +146,7 @@ public class BspFile {
 	 * sizeof(lightmap) records in the lump, where length is the size of the
 	 * lump itself, as specified in the lump directory.
 	 */
-	Lightmap[] lightmaps;
+	public Lightmap[] lightmaps;
 
 	/**
 	 * The lightvols lump stores a uniform grid of lighting information used to
@@ -154,13 +154,13 @@ public class BspFile {
 	 * sizeof(lightvol) records in the lump, where length is the size of the
 	 * lump itself, as specified in the lump directory.
 	 */
-	Lightvol[] lightvols;
+	public Lightvol[] lightvols;
 
 	/**
 	 * The visdata lump stores bit vectors that provide cluster-to-cluster
 	 * visibility information. There is exactly one visdata record, with a
 	 * length equal to that specified in the lump directory.
 	 */
-	Visdata visdata;
+	public Visdata visdata;
 
 }

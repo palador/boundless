@@ -9,9 +9,9 @@ public class Brushside {
 	/**
 	 * Plane index.
 	 */
-	int plane;
+	public int plane;
 	/**
 	 * Texture index.
 	 */
-	int texture;
+	public int texture;
 }

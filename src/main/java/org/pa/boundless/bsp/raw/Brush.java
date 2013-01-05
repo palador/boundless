@@ -11,13 +11,13 @@ public class Brush {
 	/**
 	 * First brushside for brush.
 	 */
-	int brushside;
+	public int brushside;
 	/**
 	 * Number of brushsides for brush.
 	 */
-	int n_brushsides;
+	public int n_brushsides;
 	/**
 	 * Texture index.
 	 */
-	int texture;
+	public int texture;
 }

@@ -15,33 +15,33 @@ public class Leaf {
 	 * If cluster is negative, the leaf is outside the map or otherwise
 	 * invalid.
 	 */
-	int cluster;
+	public int cluster;
 	/**
 	 * Areaportal area.
 	 */
-	int area;
+	public int area;
 	/**
 	 * Integer bounding box min coord.
 	 */
-	int[] mins = new int[3];
+	public final int[] mins = new int[3];
 	/**
 	 * Integer bounding box max coord.
 	 */
-	int[] maxs = new int[3];
+	public final int[] maxs = new int[3];
 	/**
 	 * First leafface for leaf.
 	 */
-	int leafface;
+	public int leafface;
 	/**
 	 * Number of leaffaces for leaf.
 	 */
-	int n_leaffaces;
+	public int n_leaffaces;
 	/**
 	 * First leafbrush for leaf.
 	 */
-	int leafbrush;
+	public int leafbrush;
 	/**
 	 * Number of leafbrushes for leaf.
 	 */
-	int n_leafbrushes;
+	public int n_leafbrushes;
 }

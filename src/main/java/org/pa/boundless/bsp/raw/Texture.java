@@ -10,15 +10,15 @@ public class Texture {
 	/**
 	 * Texture name.
 	 */
-	char[] name = new char[64];
+	public final char[] name = new char[64];
 
 	/**
 	 * Surface flags.
 	 */
-	int flags;
+	public int flags;
 
 	/**
 	 * Content flags.
 	 */
-	int contents;
+	public int contents;
 }

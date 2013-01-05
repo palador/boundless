@@ -10,13 +10,13 @@ public class Effect {
 	/**
 	 * Effect shader.
 	 */
-	char[] name = new char[64];
+	public final char[] name = new char[64];
 	/**
 	 * Brush that generated this effect.
 	 */
-	int brush;
+	public int brush;
 	/**
 	 * Always 5, except in q3dm8, which has one effect with -1.
 	 */
-	int unknown;
+	public int unknown;
 }

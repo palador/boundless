@@ -12,20 +12,20 @@ public class Node {
 	/**
 	 * Plane index.
 	 */
-	int plane;
+	public int plane;
 
 	/**
 	 * Children indices. Negative numbers are leaf indices: -(leaf+1).
 	 */
-	int[] children = new int[2];
+	public int[] children = new int[2];
 
 	/**
 	 * Integer bounding box min coord.
 	 */
-	int[] mins = new int[3];
+	public final int[] mins = new int[3];
 
 	/**
 	 * Integer bounding box max coord.
 	 */
-	int[] maxs = new int[3];
+	public final int[] maxs = new int[3];
 }

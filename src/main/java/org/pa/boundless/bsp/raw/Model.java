@@ -15,25 +15,25 @@ public class Model {
 	/**
 	 * Bounding box min coord.
 	 */
-	float[] mins = new float[3];
+	public final float[] mins = new float[3];
 	/**
 	 * Bounding box max coord.
 	 */
-	float[] maxs = new float[3];
+	public final float[] maxs = new float[3];
 	/**
 	 * First face for model.
 	 */
-	int face;
+	public int face;
 	/**
 	 * Number of faces for model.
 	 */
-	int n_faces;
+	public int n_faces;
 	/**
 	 * First brush for model.
 	 */
-	int brush;
+	public int brush;
 	/**
 	 * Number of brushes for model.
 	 */
-	int n_brushes;
+	public int n_brushes;
 }

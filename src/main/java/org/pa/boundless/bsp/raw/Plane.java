@@ -10,10 +10,10 @@ public class Plane {
 	/**
 	 * Plane normal.
 	 */
-	float[] normal = new float[3];
+	public final float[] normal = new float[3];
 
 	/**
 	 * Distance from origin to plane along normal.
 	 */
-	float dist;
+	public float dist;
 }
