@@ -2,7 +2,6 @@ $ cat .gitignore
 
 *.so
 hs_err*
-.settings/**
 target/**
 baseq3/**
 missionpack/**
