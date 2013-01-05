@@ -7,7 +7,7 @@ package org.pa.boundless.bsp.raw;
  * 
  * @author palador
  */
-public class Brush {
+public class Brush extends Chunk {
 	/**
 	 * First brushside for brush.
 	 */

@@ -6,7 +6,7 @@ package org.pa.boundless.bsp.raw;
  * 
  * @author palador
  */
-public class Effect {
+public class Effect extends Chunk {
 	/**
 	 * Effect shader.
 	 */

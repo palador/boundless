@@ -30,7 +30,7 @@ package org.pa.boundless.bsp.raw;
  * 
  * @author palador
  */
-public class Face {
+public class Face extends Chunk {
 
 	/**
 	 * For type 1 faces (polygons), vertex and n_vertexes describe a set of

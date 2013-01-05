@@ -8,7 +8,7 @@ package org.pa.boundless.bsp.raw;
  * 
  * @author palador
  */
-public class BspFile {
+public class BspFile extends Chunk {
 
 	/**
 	 * The header of the BspFile.

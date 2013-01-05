@@ -6,7 +6,7 @@ package org.pa.boundless.bsp.raw;
  * 
  * @author palador
  */
-public class Plane {
+public class Plane extends Chunk {
 	/**
 	 * Plane normal.
 	 */

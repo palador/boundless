@@ -6,7 +6,7 @@ package org.pa.boundless.bsp.raw;
  * 
  * @author palador
  */
-public class Texture {
+public class Texture extends Chunk {
 	/**
 	 * Texture name.
 	 */

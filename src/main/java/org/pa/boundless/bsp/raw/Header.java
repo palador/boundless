@@ -4,7 +4,7 @@ package org.pa.boundless.bsp.raw;
 /**
  * Header and directory.
  */
-public class Header {
+public class Header extends Chunk {
 
 	/**
 	 * Magic number. Always "IBSP".

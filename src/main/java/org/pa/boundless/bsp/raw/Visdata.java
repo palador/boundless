@@ -11,7 +11,7 @@ package org.pa.boundless.bsp.raw;
  * 
  * @author palador
  */
-public class Visdata {
+public class Visdata extends Chunk {
 	/**
 	 * Number of vectors.
 	 */

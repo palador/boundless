@@ -11,7 +11,7 @@ package org.pa.boundless.bsp.raw;
  * 
  * @author palador
  */
-public class Model {
+public class Model extends Chunk {
 	/**
 	 * Bounding box min coord.
 	 */

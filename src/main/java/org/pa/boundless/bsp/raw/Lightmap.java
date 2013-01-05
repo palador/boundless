@@ -6,7 +6,7 @@ package org.pa.boundless.bsp.raw;
  * 
  * @author palador
  */
-public class Lightmap {
+public class Lightmap extends Chunk {
 	/**
 	 * Lightmap color data. RGB.
 	 */

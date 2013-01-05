@@ -13,7 +13,7 @@ package org.pa.boundless.bsp.raw;
  * 
  * @author palador
  */
-public class Lightvol {
+public class Lightvol extends Chunk {
 	/**
 	 * Index of phi for dir.
 	 */

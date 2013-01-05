@@ -8,7 +8,7 @@ package org.pa.boundless.bsp.raw;
  * 
  * @author palador
  */
-public class Node {
+public class Node extends Chunk {
 	/**
 	 * Plane index.
 	 */

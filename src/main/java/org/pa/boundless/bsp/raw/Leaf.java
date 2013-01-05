@@ -8,7 +8,7 @@ package org.pa.boundless.bsp.raw;
  * 
  * @author palador
  */
-public class Leaf {
+public class Leaf extends Chunk {
 	/**
 	 * Visdata cluster index.
 	 * 

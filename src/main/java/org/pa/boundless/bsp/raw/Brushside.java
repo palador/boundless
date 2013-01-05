@@ -5,7 +5,7 @@ package org.pa.boundless.bsp.raw;
  * 
  * @author palador
  */
-public class Brushside {
+public class Brushside extends Chunk {
 	/**
 	 * Plane index.
 	 */

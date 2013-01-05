@@ -5,7 +5,7 @@ package org.pa.boundless.bsp.raw;
  * 
  * @author palador
  */
-public class Vertex {
+public class Vertex extends Chunk {
 	/**
 	 * Vertex position.
 	 */
