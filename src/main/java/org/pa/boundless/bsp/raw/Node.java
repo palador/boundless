@@ -17,7 +17,7 @@ public class Node {
 	/**
 	 * Children indices. Negative numbers are leaf indices: -(leaf+1).
 	 */
-	public int[] children = new int[2];
+	public final int[] children = new int[2];
 
 	/**
 	 * Integer bounding box min coord.

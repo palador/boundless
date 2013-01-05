@@ -34,12 +34,11 @@ public class Face {
 
 	/**
 	 * For type 1 faces (polygons), vertex and n_vertexes describe a set of
-	 * vertices that form a polygon. The set always contains a loop of
-	 * vertices, and sometimes also includes an additional vertex near the
-	 * center of the polygon. For these faces, meshvert and n_meshverts
-	 * describe a valid polygon triangulation. Every three meshverts
-	 * describe a triangle. Each meshvert is an offset from the first vertex
-	 * of the face, given by vertex.
+	 * vertices that form a polygon. The set always contains a loop of vertices,
+	 * and sometimes also includes an additional vertex near the center of the
+	 * polygon. For these faces, meshvert and n_meshverts describe a valid
+	 * polygon triangulation. Every three meshverts describe a triangle. Each
+	 * meshvert is an offset from the first vertex of the face, given by vertex.
 	 */
 	public static final int POLYGON = 1;
 	/**
@@ -57,17 +56,17 @@ public class Face {
 	 */
 	public static final int PATCH = 2;
 	/**
-	 * For type 3 faces (meshes), meshvert and n_meshverts are used to
-	 * describe the independent triangles that form the mesh. As with type 1
-	 * faces, every three meshverts describe a triangle, and each meshvert
-	 * is an offset from the first vertex of the face, given by vertex.
+	 * For type 3 faces (meshes), meshvert and n_meshverts are used to describe
+	 * the independent triangles that form the mesh. As with type 1 faces, every
+	 * three meshverts describe a triangle, and each meshvert is an offset from
+	 * the first vertex of the face, given by vertex.
 	 */
 	public static final int MESH = 3;
 	/**
-	 * For type 4 faces (billboards), vertex describes the single vertex
-	 * that determines the location of the billboard. Billboards are used
-	 * for effects such as flares. Exactly how each billboard vertex is to
-	 * be interpreted has not been investigated.
+	 * For type 4 faces (billboards), vertex describes the single vertex that
+	 * determines the location of the billboard. Billboards are used for effects
+	 * such as flares. Exactly how each billboard vertex is to be interpreted
+	 * has not been investigated.
 	 */
 	public static final int BILLBOARD = 4;
 
@@ -106,25 +105,26 @@ public class Face {
 	/**
 	 * Corner of this face's lightmap image in lightmap.
 	 */
-	public int[] lm_start;
+	public final int[] lm_start = new int[2];
 	/**
 	 * Size of this face's lightmap image in lightmap.
 	 */
-	public int[] lm_size;
+	public final int[] lm_size = new int[2];
 	/**
 	 * World space origin of lightmap.
 	 */
-	public float[] lm_origin;
+	public final float[] lm_origin = new float[3];
 	/**
 	 * World space lightmap s and t unit vectors.
 	 */
-	public float[] lm_vecs;
+	public final float[][] lm_vecs = new float[2][3];
 	/**
 	 * Surface normal.
 	 */
-	public float[] normal;
+	public final float[] normal = new float[3];
 	/**
 	 * Patch dimensions.
 	 */
-	public int[] size;
+	public final int[] size = new int[2];
+
 }
