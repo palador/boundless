@@ -10,6 +10,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -167,7 +168,8 @@ public class ChunkReader<T> {
 			value = buf[0];
 		} else {
 			// use bytebuffer to read primitive types other than byte
-			ByteBuffer byteBuf = ByteBuffer.wrap(buf);
+			ByteBuffer byteBuf = ByteBuffer.wrap(buf).order(
+					ByteOrder.LITTLE_ENDIAN);
 
 			if (fieldType == char.class) {
 				value = USASCII.decode(byteBuf).get();
