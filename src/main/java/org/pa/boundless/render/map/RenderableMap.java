@@ -13,6 +13,7 @@ import org.pa.boundless.bsp.raw.Lightmap;
 import org.pa.boundless.bsp.raw.Vertex;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.asset.AssetNotFoundException;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Geometry;
@@ -37,7 +38,17 @@ public class RenderableMap {
 		Texture defaultTexture = null;
 		for (org.pa.boundless.bsp.raw.Texture texture : bspFile.textures) {
 			String name = BspUtil.charsToString(texture.name);
-			Texture tex = assetManager.loadTexture(name + ".tga");
+			Texture tex;
+			try {
+				tex = assetManager.loadTexture(name + ".tga");
+			} catch (AssetNotFoundException e) {
+				if (defaultTexture == null) {
+					defaultTexture =
+							new Texture2D(new Image(Format.RGB8, 16, 16,
+									BufferUtils.createByteBuffer(16 * 16 * 3)));
+				}
+				tex = defaultTexture;
+			}
 			tex.setWrap(WrapMode.Repeat);
 			textures.add(tex);
 		}
@@ -81,7 +92,6 @@ public class RenderableMap {
 					arraycopy(v.texcoord[1], 0, lmBuf, iV * 2, 2);
 					// fix v-coord: flip flip flip
 					texBuf[iV * 2 + 1] *= -1;
-					lmBuf[iV * 2 + 1] *= -1;
 				}
 
 				// fix position buf: exchange x and y
