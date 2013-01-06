@@ -87,11 +87,8 @@ public class RenderableMap {
 							+ ArrayUtils.toString(v.texcoord[1]));
 					arraycopy(v.position, 0, positionBuf, iV * 3, 3);
 					arraycopy(v.texcoord[0], 0, texBuf, iV * 2, 2);
-					texBuf[iV * 2] /= 8;
-					texBuf[iV * 2] += 0.5f;
-					texBuf[iV * 2 + 1] /= -8;
-					texBuf[iV * 2 + 1] += 0.5f;
-
+					// fix v-coord: flip flip flip
+					texBuf[iV * 2 + 1] *= -1;
 					arraycopy(v.texcoord[1], 0, lmBuf, iV * 2, 2);
 				}
 
