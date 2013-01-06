@@ -9,3 +9,4 @@ missionpack/**
 docs/**
 data/maps/**
 !data/maps/*.map
+!data/maps/*.bsp
