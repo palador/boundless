@@ -80,12 +80,14 @@ public class ChunkReader<T> {
 							+ field.getName());
 
 					// find out how long each dimension is and increase chunkLen
+					int totalElementCount = 1;
 					for (int dim = 0; dim < dimensions; dim++) {
 						dimensionsLengths[dim] = Array.getLength(arrayValue);
-						chunkLen += sizeof(arrayType) * dimensionsLengths[dim];
+						totalElementCount *= dimensionsLengths[dim];
 
 						arrayValue = Array.get(arrayValue, 0);
 					}
+					chunkLen += totalElementCount * sizeof(arrayType);
 
 					fieldLoaders.add(new ArrayFieldLoader(field, arrayType,
 							dimensionsLengths));
