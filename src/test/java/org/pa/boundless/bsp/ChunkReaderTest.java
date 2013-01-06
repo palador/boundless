@@ -58,22 +58,13 @@ public class ChunkReaderTest {
 
 	@Test(description = "Test of huge array-fields. A lightmap contains an single byte[128][128][3] array.")
 	public void lighmap() throws IOException {
-		byte[][][] lightmapdata = new byte[128][128][3];
 		byte[] bytes = new byte[128 * 128 * 3];
 		new Random("42".hashCode()).nextBytes(bytes);
-		int i = 0;
-		for (byte[][] a : lightmapdata) {
-			for (byte[] b : a) {
-				for (int j = 0; j < 3; j++) {
-					b[j] = bytes[i++];
-				}
-			}
-		}
 
 		ChunkReader<Lightmap> reader = new ChunkReader<>(Lightmap.class);
 		Lightmap lightmap = reader.loadChunk(ByteBuffer.wrap(bytes));
 
-		assertTrue(Arrays.deepEquals(lightmap.map, lightmapdata));
+		assertTrue(Arrays.equals(lightmap.map, bytes));
 	}
 
 	@Test(description = "Test node which contains simple fields and arrays")

@@ -8,7 +8,7 @@ package org.pa.boundless.bsp.raw;
  */
 public class Lightmap extends Chunk {
 	/**
-	 * Lightmap color data. RGB.
+	 * Lightmap color data. 128*128*RGB.
 	 */
-	public final byte[][][] map = new byte[128][128][3];
+	public final byte[] map = new byte[128 * 128 * 3];
 }

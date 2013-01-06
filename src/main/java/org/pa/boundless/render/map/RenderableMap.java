@@ -2,7 +2,6 @@ package org.pa.boundless.render.map;
 
 import static java.lang.System.arraycopy;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -35,9 +34,10 @@ public class RenderableMap {
 		System.out.println(bspFile.toString());
 		// load textures
 		ArrayList<Texture> textures = new ArrayList<>();
+		Texture defaultTexture = null;
 		for (org.pa.boundless.bsp.raw.Texture texture : bspFile.textures) {
 			String name = BspUtil.charsToString(texture.name);
-			Texture tex =assetManager.loadTexture(name + ".tga");
+			Texture tex = assetManager.loadTexture(name + ".tga");
 			tex.setWrap(WrapMode.Repeat);
 			textures.add(tex);
 		}
@@ -45,18 +45,9 @@ public class RenderableMap {
 		// load lightmaps
 		ArrayList<Texture> lightmaps = new ArrayList<>();
 		for (Lightmap lightmap : bspFile.lightmaps) {
-			byte[] bytes = new byte[128 * 128 * 3];
-			int i = 0;
-			for (byte[][] row : lightmap.map) {
-				for (byte[] col : row) {
-					for (byte colorcomp : col) {
-						bytes[i++] = colorcomp;
-					}
-				}
-			}
-
 			Image img =
-					new Image(Format.RGB8, 128, 128, ByteBuffer.wrap(bytes));
+					new Image(Format.RGB8, 128, 128,
+							BufferUtils.createByteBuffer(lightmap.map));
 			lightmaps.add(new Texture2D(img));
 		}
 
@@ -87,9 +78,10 @@ public class RenderableMap {
 							+ ArrayUtils.toString(v.texcoord[1]));
 					arraycopy(v.position, 0, positionBuf, iV * 3, 3);
 					arraycopy(v.texcoord[0], 0, texBuf, iV * 2, 2);
+					arraycopy(v.texcoord[1], 0, lmBuf, iV * 2, 2);
 					// fix v-coord: flip flip flip
 					texBuf[iV * 2 + 1] *= -1;
-					arraycopy(v.texcoord[1], 0, lmBuf, iV * 2, 2);
+					lmBuf[iV * 2 + 1] *= -1;
 				}
 
 				// fix position buf: exchange x and y
@@ -121,7 +113,7 @@ public class RenderableMap {
 						new Material(assetManager,
 								"Common/MatDefs/Misc/Unshaded.j3md");
 				mat.setTexture("ColorMap", textures.get(face.texture));
-				mat.setTexture("LightMap", textures.get(face.lm_index));
+				mat.setTexture("LightMap", lightmaps.get(face.lm_index));
 				mat.setColor("Color", ColorRGBA.Gray);
 				mat.setBoolean("SeparateTexCoord", true);
 
