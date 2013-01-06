@@ -1,11 +1,16 @@
 package abc.die.katze;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+
+import org.pa.boundless.bsp.BspLoader;
+import org.pa.boundless.bsp.raw.BspFile;
+import org.pa.boundless.render.map.RenderableMap;
+import org.pa.boundless.resources.BoundlessAssetLocator;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
-import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.font.BitmapText;
@@ -38,60 +43,87 @@ public class MyTest extends SimpleApplication implements ActionListener {
 
 	@Override
 	public void simpleInitApp() {
-		flyCam.setMoveSpeed(0);
-		settings.setVSync(true);
-		setUpKeys();
-
-		Map map = new Map();
 		try {
-			map.load(MyTest.class.getResourceAsStream("test.map"));
-		} catch (IOException e) {
-			throw new RuntimeException("failed to load map", e);
+			assetManager.registerLocator("data", BoundlessAssetLocator.class);
+			BspLoader bspLoader =
+					new BspLoader().setStream(new FileInputStream(
+							"data/maps/first.bsp"));
+			BspFile bsp = bspLoader.call();
+			RenderableMap map = new RenderableMap(assetManager, bsp);
+			rootNode.attachChild(map.getRootNode());
+
+			Box b = new Box(Vector3f.ZERO, 1, 1, 1); // create cube shape at the
+														// origin
+			Geometry geom = new Geometry("Box", b); // create cube geometry from
+													// the shape
+			Material mat =
+					new Material(assetManager,
+							"Common/MatDefs/Misc/Unshaded.j3md"); // create a
+																	// simple
+																	// material
+			mat.setColor("Color", ColorRGBA.Blue); // set color of material to
+													// blue
+			geom.setMaterial(mat); // set the cube's material
+			rootNode.attachChild(geom);
+		} catch (IOException e1) {
+			throw new RuntimeException("ERR: ", e1);
 		}
-		mapWidth = map.getWidth() * boxSize;
-		mapHeight = map.getHeight() * boxSize;
+		flyCam.setMoveSpeed(300);
+		flyCam.setEnabled(true);
+		// settings.setVSync(true);
+		// setUpKeys();
 
-		wallMat = new Material(assetManager,
-				"Common/MatDefs/Light/Lighting.j3md");
-
-		// physic
-		stateManager.attach(bulletAppState);
-
-		// MAP
+		// Map map = new Map();
+		// try {
+		// map.load(MyTest.class.getResourceAsStream("test.map"));
+		// } catch (IOException e) {
+		// throw new RuntimeException("failed to load map", e);
+		// }
+		// mapWidth = map.getWidth() * boxSize;
+		// mapHeight = map.getHeight() * boxSize;
 		//
-		final float boxSize = 1f;
-		final float boxExtend = boxSize / 2f;
-		// build floor
-		addBox(-map.getWidth(), -1, -map.getHeight(), 3 * map.getWidth(), 1,
-				3 * map.getHeight());
-
-		// build walls
-		addWalls(0, 0, map);
-		for (int x = -1; x <= 1; x += 2) {
-			addWalls(x, 0, map);
-		}
-		for (int y = -1; y <= 1; y += 2) {
-			addWalls(0, y, map);
-		}
-
-		// player
-		CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(2f, 6f,
-				1);
-		player = new CharacterControl(capsuleShape, 0.01f);
-		player.setJumpSpeed(0.4f);
-		player.setFallSpeed(20f);
-		player.setGravity(10f);
-		player.setPhysicsLocation(new Vector3f(map.getStartX() * boxSize
-				+ boxExtend, 10, map.getStartY() * boxSize + boxExtend));
-		bulletAppState.getPhysicsSpace().add(player);
-
-		guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
-		helloTxt = new BitmapText(guiFont, false);
-		helloTxt.setSize(guiFont.getCharSet().getRenderedSize());
-		helloTxt.setText("Hello World");
-		helloTxt.setLocalTranslation(300, helloTxt.getLineHeight(), 0);
-		guiNode.attachChild(helloTxt);
-
+		// wallMat = new Material(assetManager,
+		// "Common/MatDefs/Light/Lighting.j3md");
+		//
+		// // physic
+		// stateManager.attach(bulletAppState);
+		//
+		// // MAP
+		// //
+		// final float boxSize = 1f;
+		// final float boxExtend = boxSize / 2f;
+		// // build floor
+		// addBox(-map.getWidth(), -1, -map.getHeight(), 3 * map.getWidth(), 1,
+		// 3 * map.getHeight());
+		//
+		// // build walls
+		// addWalls(0, 0, map);
+		// for (int x = -1; x <= 1; x += 2) {
+		// addWalls(x, 0, map);
+		// }
+		// for (int y = -1; y <= 1; y += 2) {
+		// addWalls(0, y, map);
+		// }
+		//
+		// // player
+		// CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(2f,
+		// 6f,
+		// 1);
+		// player = new CharacterControl(capsuleShape, 0.01f);
+		// player.setJumpSpeed(0.4f);
+		// player.setFallSpeed(20f);
+		// player.setGravity(10f);
+		// player.setPhysicsLocation(new Vector3f(map.getStartX() * boxSize
+		// + boxExtend, 10, map.getStartY() * boxSize + boxExtend));
+		// bulletAppState.getPhysicsSpace().add(player);
+		//
+		// guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
+		// helloTxt = new BitmapText(guiFont, false);
+		// helloTxt.setSize(guiFont.getCharSet().getRenderedSize());
+		// helloTxt.setText("Hello World");
+		// helloTxt.setLocalTranslation(300, helloTxt.getLineHeight(), 0);
+		// guiNode.attachChild(helloTxt);
+		//
 		DirectionalLight sun = new DirectionalLight();
 		sun.setDirection(new Vector3f(-0.6f, -0.4f, -1));
 		sun.setColor(ColorRGBA.White);
@@ -165,29 +197,30 @@ public class MyTest extends SimpleApplication implements ActionListener {
 
 	@Override
 	public void simpleUpdate(float tpf) {
-		Vector3f camDir = cam.getDirection().clone().multLocal(0.6f);
-		Vector3f camLeft = cam.getLeft().clone().multLocal(0.4f);
-		walkDirection.set(0, 0, 0);
-		if (left) {
-			walkDirection.addLocal(camLeft);
-		}
-		if (right) {
-			walkDirection.addLocal(camLeft.negate());
-		}
-		if (up) {
-			walkDirection.addLocal(camDir);
-		}
-		if (down) {
-			walkDirection.addLocal(camDir.negate());
-		}
-		player.setWalkDirection(walkDirection);
-		Vector3f location = new Vector3f(player.getPhysicsLocation());
-		location.x = fixPos(location.x, mapWidth);
-		location.z = fixPos(location.z, mapHeight);
-		player.setPhysicsLocation(location);
-		helloTxt.setText(String.format("%.1f %.1f%.1f", location.x, location.y,
-				location.z));
-		cam.setLocation(location);
+		// Vector3f camDir = cam.getDirection().clone().multLocal(0.6f);
+		// Vector3f camLeft = cam.getLeft().clone().multLocal(0.4f);
+		// walkDirection.set(0, 0, 0);
+		// if (left) {
+		// walkDirection.addLocal(camLeft);
+		// }
+		// if (right) {
+		// walkDirection.addLocal(camLeft.negate());
+		// }
+		// if (up) {
+		// walkDirection.addLocal(camDir);
+		// }
+		// if (down) {
+		// walkDirection.addLocal(camDir.negate());
+		// }
+		// player.setWalkDirection(walkDirection);
+		// Vector3f location = new Vector3f(player.getPhysicsLocation());
+		// location.x = fixPos(location.x, mapWidth);
+		// location.z = fixPos(location.z, mapHeight);
+		// player.setPhysicsLocation(location);
+		// helloTxt.setText(String.format("%.1f %.1f%.1f", location.x,
+		// location.y,
+		// location.z));
+		// cam.setLocation(location);
 	}
 
 	private float fixPos(float pos, float max) {
