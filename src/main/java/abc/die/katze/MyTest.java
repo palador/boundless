@@ -221,6 +221,11 @@ public class MyTest extends SimpleApplication implements ActionListener {
 		// location.y,
 		// location.z));
 		// cam.setLocation(location);
+		Vector3f loc = cam.getLocation();
+		loc.x = fixPos(loc.x, 448);
+		loc.y = fixPos(loc.y, 448);
+		loc.z = fixPos(loc.z, 384);
+		cam.setLocation(loc);
 	}
 
 	private float fixPos(float pos, float max) {
