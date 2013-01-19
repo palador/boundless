@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +16,11 @@ import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.linear.SingularMatrixException;
 import org.pa.boundless.util.Math3D;
+
+import com.jme3.math.Vector3f;
 
 public class MapLoader implements Callable<PropertiesGroup> {
 
@@ -105,13 +108,18 @@ public class MapLoader implements Callable<PropertiesGroup> {
 
 		PropertiesGroup result = entities.clone();
 
-		// add original stuff 2 times per axis
+		// add original stuff 2 times per axis and find new bounds
+		float[][] newBounds = new float[2][3];
 		for (int iaxis = 0; iaxis < 3; iaxis++) {
 			for (int direction = -1; direction <= 1; direction += 2) {
+				// duplicate
 				float[] offset = new float[3];
 				offset[iaxis] =
 						direction * (bounds[1][iaxis] - bounds[0][iaxis]);
+				int idir = direction == -1 ? 0 : 1;
+				newBounds[idir][iaxis] = bounds[idir][iaxis] + offset[iaxis];
 
+				// duplicate
 				List<PropertiesGroup> orgEntities = entities.getChildren();
 				for (int ie = 0; ie < orgEntities.size(); ie++) {
 					PropertiesGroup orgEntity = orgEntities.get(ie);
@@ -132,8 +140,36 @@ public class MapLoader implements Callable<PropertiesGroup> {
 						targetEntity.addChild(offsetBrush(brush, offset));
 					}
 				}
+
 			}
 		}
+
+		// create walls arround new world
+		for (int iaxis = 0; iaxis < 3; iaxis++) {
+			for (int idir = 0; idir <= 1; idir++) {
+				float[][] wallPoints = Math3D.clonePoints(newBounds);
+				int iotherdir = idir == 0 ? 1 : 0; 
+				wallPoints[iotherdir][iaxis] = wallPoints[idir][iaxis];
+				wallPoints[idir][iaxis] += (idir == 0 ? -1 : 1) * 8;
+
+				// add new brush to worldspawn
+				result.getChildren().get(0)
+						.addChild(createWhiteBrush(wallPoints));
+			}
+		}
+
+		// put original bound into worldspawn
+		StringBuilder entryBuilder = new StringBuilder("\"bl_bounds\" \"");
+		for (int ip = 0; ip < 2; ip++) {
+			for (int iaxis = 0; iaxis < 3; iaxis++) {
+				if (ip + iaxis > 0) {
+					entryBuilder.append(' ');
+				}
+				entryBuilder.append(US_NUM_FORMAT.format(bounds[ip][iaxis]));
+			}
+		}
+		entryBuilder.append("\"");
+		result.getChildren().get(0).addEntry(entryBuilder.toString());
 
 		return result;
 	}
@@ -176,35 +212,59 @@ public class MapLoader implements Callable<PropertiesGroup> {
 	}
 
 	private static PropertiesGroup createWhiteBrush(float[][] bounds) {
-		float[] tmp = bounds[1];
-		bounds[1] = bounds[0];
-		bounds[0] = tmp;
+		String cubeDef =
+				"{\n"
+						+ //
+						"( 128 128 64 ) ( 64 128 64 ) ( 64 64 64 ) common/white 0 0 0 0.500000 0.500000 0 0 0\n"
+						+ //
+						"( 64 64 128 ) ( 64 128 128 ) ( 128 128 128 ) common/white 0 0 0 0.500000 0.500000 0 0 0\n"
+						+ //
+						"( 64 64 72 ) ( 128 64 72 ) ( 128 64 64 ) common/white 0 0 0 0.500000 0.500000 0 0 0\n"
+						+ //
+						"( 128 64 72 ) ( 128 128 72 ) ( 128 128 64 ) common/white 0 0 0 0.500000 0.500000 0 0 0\n"
+						+ //
+						"( 128 128 72 ) ( 64 128 72 ) ( 64 128 64 ) common/white 0 0 0 0.500000 0.500000 0 0 0\n"
+						+ //
+						"( 64 128 72 ) ( 64 64 72 ) ( 64 64 64 ) common/white 0 0 0 0.500000 0.500000 0 0 0\n"
+						+ //
+						"}";
+		PropertiesGroup template;
+		try {
+			template =
+					PropertiesGroup.parsePropertiesGroup(new BufferedReader(
+							new StringReader(cubeDef)));
+		} catch (IOException e) {
+			throw new RuntimeException("very unlikely");
+		}
+
 		PropertiesGroup result = new PropertiesGroup();
-		System.out.println("CREATE FOR : " + ArrayUtils.toString(bounds));
+		for (String templatePlaneDef : template.getEntries()) {
+			Plane plane = new Plane(templatePlaneDef);
+			// find direction (normal)
+			Vector3f[] points = Math3D.toVecs(plane.points);
+			Vector3f normal =
+					points[2].subtract(points[0]).cross(
+							points[1].subtract(points[0]));
 
-		for (int iaxis = 0; iaxis < 3; iaxis++) {
-			for (int side = 0; side <= 1; side++) {
+			// find side (top, front, left...)
+			MODLOOP: for (int side = 0; side < 3; side++) {
+				for (int direction = -1; direction <= 1; direction += 2) {
+					Vector3f otherNormal = new Vector3f(0, 0, 0);
+					otherNormal.set(side, direction);
 
-				Plane plane =
-						new Plane(
-								"( 0 0 0 ) ( 0 0 0 ) ( 0 0 0 ) common/white 0 0 0 0.500000 0.500000 0 0 0");
-
-				for (int ip = 0; ip < 3; ip++) {
-					plane.points[ip][(iaxis + 0) % 3] = bounds[side][iaxis];
-					plane.points[ip][(iaxis + 1) % 3] =
-							bounds[ip == 0 ? flipSide(side) : side][iaxis];
-					plane.points[ip][(iaxis + 2) % 3] =
-							bounds[ip == 2 ? flipSide(side) : side][iaxis];
+					if (normal.angleBetween(otherNormal) < 0.1) {
+						for (int ip = 0; ip < 3; ip++) {
+							plane.points[ip][side] =
+									bounds[direction == -1 ? 0 : 1][side];
+						}
+						break MODLOOP;
+					}
 				}
-
-				result.addEntry(plane.toString());
 			}
+
+			result.addEntry(plane.toString());
 		}
 		return result;
-	}
-
-	private static int flipSide(int side) {
-		return side == 0 ? 1 : 0;
 	}
 
 	private static boolean isPlane(String entry) {
@@ -220,7 +280,7 @@ public class MapLoader implements Callable<PropertiesGroup> {
 		// TODO KILLME
 		PropertiesGroup result =
 				new MapLoader().setInputStream(
-						new FileInputStream(new File("data/maps/cube.map")))
+						new FileInputStream(new File("data/maps/first.map")))
 						.call();
 
 		System.out.println(result.toIntendedString());
@@ -228,12 +288,6 @@ public class MapLoader implements Callable<PropertiesGroup> {
 		for (PropertiesGroup group : result.getChildren()) {
 			out.write(group.toString());
 		}
-		PropertiesGroup test = new PropertiesGroup();
-		test.addEntry("\"classname\" \"func_group\"");
-		test.addChild(createWhiteBrush(new float[][] { { 128, 196, 256 },
-				{ 128 + 1024, 196 + 1024, 256 + 1024 } }));
-		out.write(test.toString());
-		System.out.println(test);
 		out.close();
 	}
 
