@@ -33,6 +33,7 @@ public class MyTest extends SimpleApplication implements ActionListener {
 	float boxSize = 10f;
 	float boxExtend = boxSize / 2;
 
+	private RenderableMap map;
 	private CharacterControl player;
 	private boolean up, down, left, right;
 	private Vector3f walkDirection = new Vector3f();
@@ -47,9 +48,9 @@ public class MyTest extends SimpleApplication implements ActionListener {
 			assetManager.registerLocator("data", BoundlessAssetLocator.class);
 			BspLoader bspLoader =
 					new BspLoader().setStream(new FileInputStream(
-							"data/maps/first.bsp"));
+							"data/maps/first_mod.bsp"));
 			BspFile bsp = bspLoader.call();
-			RenderableMap map = new RenderableMap(assetManager, bsp);
+			map = new RenderableMap(assetManager, bsp);
 			rootNode.attachChild(map.getRootNode());
 
 			Box b = new Box(Vector3f.ZERO, 1, 1, 1); // create cube shape at the
@@ -136,17 +137,21 @@ public class MyTest extends SimpleApplication implements ActionListener {
 
 	private void addBox(int x, int y, int z, int width, int height, int depth) {
 
-		Vector3f pos = new Vector3f(boxSize * x + width * boxExtend, boxSize
-				* y + height * boxExtend, boxSize * z + depth * boxExtend);
-		Box box = new Box(pos, boxExtend * width, boxExtend * height, boxExtend
-				* depth);
-		Geometry geom = new Geometry("box" + x + "," + y + "," + z + ","
-				+ width + "," + height + "," + depth, box);
+		Vector3f pos =
+				new Vector3f(boxSize * x + width * boxExtend, boxSize * y
+						+ height * boxExtend, boxSize * z + depth * boxExtend);
+		Box box =
+				new Box(pos, boxExtend * width, boxExtend * height, boxExtend
+						* depth);
+		Geometry geom =
+				new Geometry("box" + x + "," + y + "," + z + "," + width + ","
+						+ height + "," + depth, box);
 		geom.setMaterial(wallMat);
 		rootNode.attachChild(geom);
 
-		BoxCollisionShape colShape = new BoxCollisionShape(new Vector3f(
-				boxExtend * width, boxExtend * height, boxExtend * depth));
+		BoxCollisionShape colShape =
+				new BoxCollisionShape(new Vector3f(boxExtend * width, boxExtend
+						* height, boxExtend * depth));
 		RigidBodyControl colCtrl = new RigidBodyControl(colShape, 0);
 		colCtrl.setPhysicsLocation(pos);
 		bulletAppState.getPhysicsSpace().add(colCtrl);
@@ -221,18 +226,21 @@ public class MyTest extends SimpleApplication implements ActionListener {
 		// location.y,
 		// location.z));
 		// cam.setLocation(location);
-		Vector3f loc = cam.getLocation();
-		loc.x = fixPos(loc.x, 448);
-		loc.y = fixPos(loc.y, 448);
-		loc.z = fixPos(loc.z, 384);
-		cam.setLocation(loc);
+		if (map.getBounds() != null) {
+			float[][] bounds = map.getBounds();
+			Vector3f loc = cam.getLocation();
+			loc.x = fixPos(loc.x, bounds[0][0], bounds[1][0]);
+			loc.y = fixPos(loc.y, bounds[0][1], bounds[1][1]);
+			loc.z = fixPos(loc.z, bounds[0][2], bounds[1][2]);
+			cam.setLocation(loc);
+		}
 	}
 
-	private float fixPos(float pos, float max) {
+	private float fixPos(float pos, float min, float max) {
 		if (pos > max) {
 			return pos - max;
 		}
-		if (pos < 0) {
+		if (pos < min) {
 			pos = max + pos;
 		}
 		return pos;

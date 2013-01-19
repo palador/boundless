@@ -5,6 +5,7 @@ import static java.lang.System.arraycopy;
 import java.util.ArrayList;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.pa.boundless.bsp.BspUtil;
 import org.pa.boundless.bsp.raw.BspFile;
 import org.pa.boundless.bsp.raw.Face;
@@ -30,6 +31,8 @@ import com.jme3.util.BufferUtils;
 public class RenderableMap {
 
 	private final Node rootNode;
+	private final MapEntities entities;
+	private final float[][] bounds;
 
 	public RenderableMap(AssetManager assetManager, BspFile bspFile) {
 		System.out.println(bspFile.toString());
@@ -136,6 +139,30 @@ public class RenderableMap {
 			rootNode.attachChild(brush);
 		}
 
+		// load entities
+		entities = new MapEntities(bspFile);
+
+		// find bounds
+		String boundsDef =
+				entities.getByClassname("worldspawn").get(0).get("bl_bounds");
+		if (boundsDef == null) {
+			bounds = null;
+		} else {
+			bounds = new float[2][3];
+			String[] coordStrArr = StringUtils.split(boundsDef);
+			for (int i = 0; i < 6; i++) {
+				bounds[i / 3][i % 3] = Float.parseFloat(coordStrArr[i]);
+			}
+		}
+
+	}
+
+	public MapEntities getEntities() {
+		return entities;
+	}
+
+	public float[][] getBounds() {
+		return bounds;
 	}
 
 	public Node getRootNode() {
