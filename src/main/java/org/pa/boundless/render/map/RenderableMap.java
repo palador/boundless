@@ -16,6 +16,7 @@ import org.pa.boundless.bsp.raw.Vertex;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.AssetNotFoundException;
 import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
@@ -33,8 +34,9 @@ public class RenderableMap {
 	private final MapEntities entities;
 	private final float[][] bounds;
 
-	public RenderableMap(AssetManager assetManager, BspFile bspFile) {
-		System.out.println(bspFile.toString());
+	public RenderableMap(AssetManager assetManager, String lm_dirname,
+			BspFile bspFile) {
+		// System.out.println(bspFile.toString());
 		// load textures
 		ArrayList<Texture> textures = new ArrayList<>();
 		Texture defaultTexture = null;
@@ -44,12 +46,18 @@ public class RenderableMap {
 			try {
 				tex = assetManager.loadTexture(name + ".tga");
 			} catch (AssetNotFoundException e) {
-				if (defaultTexture == null) {
-					defaultTexture =
-							new Texture2D(new Image(Format.RGB8, 16, 16,
-									BufferUtils.createByteBuffer(16 * 16 * 3)));
+				try {
+					tex = assetManager.loadTexture(name + ".jpg");
+				} catch (AssetNotFoundException e2) {
+					System.out.println("FAILFAIL: " + e.getMessage());
+					if (defaultTexture == null) {
+						defaultTexture =
+								new Texture2D(new Image(Format.RGB8, 16, 16,
+										BufferUtils
+												.createByteBuffer(16 * 16 * 3)));
+					}
+					tex = defaultTexture;
 				}
-				tex = defaultTexture;
 			}
 			tex.setWrap(WrapMode.Repeat);
 			textures.add(tex);
@@ -63,7 +71,7 @@ public class RenderableMap {
 		ArrayList<Texture> lightmaps = new ArrayList<>();
 		for (int i = 0; i <= maxLmIndex; i++) {
 			lightmaps.add(assetManager.loadTexture(format(
-					"maps/first_mod/lm_%04d.tga", i)));
+					"maps/%s/lm_%04d.tga", lm_dirname, i)));
 		}
 
 		for (Lightmap lightmap : bspFile.lightmaps) {
@@ -99,9 +107,7 @@ public class RenderableMap {
 
 				// fix position buf: exchange x and y
 				for (int pi = 0; pi < positionBuf.length; pi += 3) {
-					float tmp = positionBuf[pi + 1];
-					positionBuf[pi + 1] = positionBuf[pi + 2];
-					positionBuf[pi + 2] = tmp;
+					exchangeYandZ(positionBuf, pi);
 				}
 
 				// load triangulation
@@ -126,8 +132,10 @@ public class RenderableMap {
 						new Material(assetManager,
 								"Common/MatDefs/Misc/Unshaded.j3md");
 				mat.setTexture("ColorMap", textures.get(face.texture));
-				mat.setTexture("LightMap", lightmaps.get(face.lm_index));
-				// mat.setColor("Color", ColorRGBA.Gray);
+				if (face.lm_index >= 0) {
+					mat.setTexture("LightMap", lightmaps.get(face.lm_index));
+				}
+				mat.setColor("Color", ColorRGBA.Gray);
 				mat.setBoolean("SeparateTexCoord", true);
 
 				Geometry geom = new Geometry("face" + iF, faceMesh);
@@ -153,8 +161,18 @@ public class RenderableMap {
 			for (int i = 0; i < 6; i++) {
 				bounds[i / 3][i % 3] = Float.parseFloat(coordStrArr[i]);
 			}
+
+			// exchange y and z
+			exchangeYandZ(bounds[0], 0);
+			exchangeYandZ(bounds[1], 0);
 		}
 
+	}
+
+	private static void exchangeYandZ(float[] pntArr, int off) {
+		float tmp = pntArr[off + 2];
+		pntArr[off + 2] = pntArr[off + 1];
+		pntArr[off + 1] = tmp;
 	}
 
 	public MapEntities getEntities() {

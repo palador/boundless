@@ -8,16 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.pa.boundless.bsp.raw.BspFile;
 
 public class MapEntities {
 
 	public static final String NO_CLASSNAME = "NO_CLASSNAME";
-	private static final Pattern ENTITY_ELEMENT_PATTERN = Pattern
-			.compile("\\w[\\w ]+");
 
 	private final ArrayList<Map<String, String>> entities = new ArrayList<>();
 	private final HashMap<String, ArrayList<Map<String, String>>> classnameToEntity =
@@ -34,18 +30,21 @@ public class MapEntities {
 			TreeMap<String, String> entity = new TreeMap<>();
 			Map<String, String> unmodifiableEntity = unmodifiableMap(entity);
 			entities.add(unmodifiableEntity);
-			
-			Matcher elementMatcher = ENTITY_ELEMENT_PATTERN.matcher(entityDef);
+
+			int quoteStart;
+			int quoteEnd = -1;
 			String key = null;
-			while(elementMatcher.find()) {
-				if(key == null) {
-					key = elementMatcher.group();
+			while ((quoteStart = entityDef.indexOf('\"', quoteEnd + 1)) != -1) {
+				quoteEnd = entityDef.indexOf('\"', quoteStart + 1);
+				String val = entityDef.substring(quoteStart + 1, quoteEnd);
+				if (key == null) {
+					key = val;
 				} else {
-					entity.put(key, elementMatcher.group());
+					entity.put(key, val);
 					key = null;
 				}
 			}
-			
+
 			String classname = entity.get("classname");
 			classname = classname != null ? classname : NO_CLASSNAME;
 			ArrayList<Map<String, String>> cnEntities =

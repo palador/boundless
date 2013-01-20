@@ -1,7 +1,11 @@
 package abc.die.katze;
 
+import static java.lang.String.format;
+
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.pa.boundless.bsp.BspLoader;
 import org.pa.boundless.bsp.raw.BspFile;
@@ -44,13 +48,16 @@ public class MyTest extends SimpleApplication implements ActionListener {
 
 	@Override
 	public void simpleInitApp() {
+		cam.setFrustumPerspective(60f,
+				(float) cam.getWidth() / (float) cam.getHeight(), 1f, 3000f);
+		Logger.getLogger("com.jme3").setLevel(Level.SEVERE);
 		try {
 			assetManager.registerLocator("data", BoundlessAssetLocator.class);
 			BspLoader bspLoader =
 					new BspLoader().setStream(new FileInputStream(
-							"data/maps/first_mod.bsp"));
+							"data/maps/testus_mod.bsp"));
 			BspFile bsp = bspLoader.call();
-			map = new RenderableMap(assetManager, bsp);
+			map = new RenderableMap(assetManager, "testus_mod", bsp);
 			rootNode.attachChild(map.getRootNode());
 
 			Box b = new Box(Vector3f.ZERO, 1, 1, 1); // create cube shape at the
@@ -69,7 +76,7 @@ public class MyTest extends SimpleApplication implements ActionListener {
 		} catch (IOException e1) {
 			throw new RuntimeException("ERR: ", e1);
 		}
-		flyCam.setMoveSpeed(300);
+		flyCam.setMoveSpeed(800);
 		flyCam.setEnabled(true);
 		// settings.setVSync(true);
 		// setUpKeys();
@@ -118,12 +125,12 @@ public class MyTest extends SimpleApplication implements ActionListener {
 		// + boxExtend, 10, map.getStartY() * boxSize + boxExtend));
 		// bulletAppState.getPhysicsSpace().add(player);
 		//
-		// guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
-		// helloTxt = new BitmapText(guiFont, false);
-		// helloTxt.setSize(guiFont.getCharSet().getRenderedSize());
-		// helloTxt.setText("Hello World");
-		// helloTxt.setLocalTranslation(300, helloTxt.getLineHeight(), 0);
-		// guiNode.attachChild(helloTxt);
+		guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
+		helloTxt = new BitmapText(guiFont, false);
+		helloTxt.setSize(guiFont.getCharSet().getRenderedSize());
+		helloTxt.setText("Hello World");
+		helloTxt.setLocalTranslation(300, helloTxt.getLineHeight(), 0);
+		guiNode.attachChild(helloTxt);
 		//
 		DirectionalLight sun = new DirectionalLight();
 		sun.setDirection(new Vector3f(-0.6f, -0.4f, -1));
@@ -233,7 +240,12 @@ public class MyTest extends SimpleApplication implements ActionListener {
 			loc.y = fixPos(loc.y, bounds[0][1], bounds[1][1]);
 			loc.z = fixPos(loc.z, bounds[0][2], bounds[1][2]);
 			cam.setLocation(loc);
+			helloTxt.setText(format(
+					"%.0f %.0f %.0f - %.0f %.0f %.0f - %.0f %.0f %.0f", loc.x,
+					loc.y, loc.z, bounds[0][0], bounds[0][1], bounds[0][2],
+					bounds[1][0], bounds[1][1], bounds[1][2]));
 		}
+		
 	}
 
 	private float fixPos(float pos, float min, float max) {

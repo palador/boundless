@@ -106,6 +106,9 @@ public class MapLoader implements Callable<PropertiesGroup> {
 			}
 		}
 
+		// FIXME : minbounds broken sometimes
+		bounds[0] = new float[3];
+
 		PropertiesGroup result = entities.clone();
 
 		// add original stuff 2 times per axis and find new bounds
@@ -280,11 +283,11 @@ public class MapLoader implements Callable<PropertiesGroup> {
 		// TODO KILLME
 		PropertiesGroup result =
 				new MapLoader().setInputStream(
-						new FileInputStream(new File("data/maps/first.map")))
+						new FileInputStream(new File("data/maps/testus.map")))
 						.call();
 
 		System.out.println(result.toIntendedString());
-		FileWriter out = new FileWriter("data/maps/first_mod.map");
+		FileWriter out = new FileWriter("data/maps/testus_mod.map");
 		for (PropertiesGroup group : result.getChildren()) {
 			out.write(group.toString());
 		}
