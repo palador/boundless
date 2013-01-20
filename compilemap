@@ -1,0 +1,11 @@
+#!/bin/sh
+Q3MAP2DIR=~/programs/GtkRadiant-1.6-Linux-x86_64-20121007/
+cd -P $Q3MAP2DIR
+#./q3map2_urt -game et -fs_game data -fs_basepath "/home/palador/dev/boundless/" -meta $1
+#./q3map2_urt -game et -fs_game data -fs_basepath "/home/palador/dev/boundless/" -vis -saveprt $1
+# ./q3map2 -game quake3 -fs_game data -fs_basepath "/home/palador/dev/boundless/" -light -fast -super 2 -filter -bounce 8 $1
+#./q3map2_urt -game et -fs_game data -fs_basepath "/home/palador/dev/boundless/" -light -fast -external -lightmapsize 1024 $1
+# ./q3map2 -game quake3 -fs_game data -fs_basepath "/home/palador/dev/boundless/" -light -fast -lightmapsize 1024 -super 2 -filter -export $1
+./q3map2_urt -game quake3 -fs_basepath "/home/palador/dev/boundless/" -fs_game data -meta $1
+./q3map2_urt -game quake3 -fs_basepath "/home/palador/dev/boundless/" -fs_game data -vis -saveprt -fast $1
+./q3map2_urt -v -game quake3 -fs_basepath "/home/palador/dev/boundless/" -fs_game data -light -border -fast -super 2 -external -lightmapsize 1024 -filter $1
