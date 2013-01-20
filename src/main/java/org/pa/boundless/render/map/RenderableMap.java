@@ -2,16 +2,20 @@ package org.pa.boundless.render.map;
 
 import static java.lang.System.arraycopy;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.pa.boundless.bsp.BspUtil;
 import org.pa.boundless.bsp.raw.BspFile;
 import org.pa.boundless.bsp.raw.Face;
 import org.pa.boundless.bsp.raw.Leaf;
-import org.pa.boundless.bsp.raw.Lightmap;
 import org.pa.boundless.bsp.raw.Vertex;
+import org.pa.boundless.build.Shader;
+import org.pa.boundless.build.ShaderLib;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.AssetNotFoundException;
@@ -34,17 +38,37 @@ public class RenderableMap {
 	private final MapEntities entities;
 	private final float[][] bounds;
 
-	public RenderableMap(AssetManager assetManager, BspFile bspFile) {
-		System.out.println(bspFile.toString());
+	public RenderableMap(AssetManager assetManager, String bspFileRoot,
+			BspFile bspFile) {
+
+		// load shaderdef
+		String shaderDef;
+		try {
+			shaderDef =
+					FileUtils.readFileToString(new File(
+							"data/scripts/q3map2_first_mod.shader"));
+		} catch (IOException e1) {
+			throw new RuntimeException("io", e1);
+		}
+		ShaderLib shaderLib = new ShaderLib();
+		shaderLib.addShaderDefinitions(shaderDef);
+
+		// load texturenames
+		ArrayList<String> texNames = new ArrayList<>();
+		for (org.pa.boundless.bsp.raw.Texture bspTex : bspFile.textures) {
+			texNames.add(BspUtil.charsToString(bspTex.name));
+		}
+
+		// System.out.println(bspFile.toString());
 		// load textures
-		ArrayList<Texture> textures = new ArrayList<>();
+		HashMap<String, Texture> nameToTex = new HashMap<>();
 		Texture defaultTexture = null;
-		for (org.pa.boundless.bsp.raw.Texture texture : bspFile.textures) {
-			String name = BspUtil.charsToString(texture.name);
+		for (String name : shaderLib.getTextures()) {
 			Texture tex;
 			try {
-				tex = assetManager.loadTexture(name + ".tga");
+				tex = assetManager.loadTexture(name);
 			} catch (AssetNotFoundException e) {
+				System.out.println("ERROR: not found " + e.getMessage());
 				if (defaultTexture == null) {
 					defaultTexture =
 							new Texture2D(new Image(Format.RGB8, 16, 16,
@@ -53,16 +77,27 @@ public class RenderableMap {
 				tex = defaultTexture;
 			}
 			tex.setWrap(WrapMode.Repeat);
-			textures.add(tex);
+			nameToTex.put(name, tex);
+			System.out.println("LOADED tex " + name);
 		}
 
 		// load lightmaps
-		ArrayList<Texture> lightmaps = new ArrayList<>();
-		for (Lightmap lightmap : bspFile.lightmaps) {
-			Image img =
-					new Image(Format.RGB8, 128, 128,
-							BufferUtils.createByteBuffer(lightmap.map));
-			lightmaps.add(new Texture2D(img));
+		HashMap<String, Texture> nameToLm = new HashMap<>();
+		for (String name : shaderLib.getLightmaps()) {
+			Texture tex;
+			try {
+				tex = assetManager.loadTexture(name);
+			} catch (AssetNotFoundException e) {
+				System.out.println("ERROR: not found " + e.getMessage());
+				if (defaultTexture == null) {
+					defaultTexture =
+							new Texture2D(new Image(Format.RGB8, 16, 16,
+									BufferUtils.createByteBuffer(16 * 16 * 3)));
+				}
+				tex = defaultTexture;
+			}
+			nameToLm.put(name, tex);
+			System.out.println("LOADED lm " + name);
 		}
 
 		rootNode = new Node("mapNode");
@@ -79,17 +114,17 @@ public class RenderableMap {
 				float[] texBuf = new float[2 * nV];
 				float[] lmBuf = new float[2 * nV];
 
-				System.out.println("FACE " + iF);
+				// System.out.println("FACE " + iF);
 
 				for (int iV = 0; iV < nV; iV++) {
 					Vertex v = bspFile.vertices[face.vertex + iV];
-					System.out.println(" Vertey " + iV);
-					System.out.println("  pos: "
-							+ ArrayUtils.toString(v.position));
-					System.out.println("  tex: "
-							+ ArrayUtils.toString(v.texcoord[0]));
-					System.out.println("  lm : "
-							+ ArrayUtils.toString(v.texcoord[1]));
+					// System.out.println(" Vertey " + iV);
+					// System.out.println("  pos: "
+					// + ArrayUtils.toString(v.position));
+					// System.out.println("  tex: "
+					// + ArrayUtils.toString(v.texcoord[0]));
+					// System.out.println("  lm : "
+					// + ArrayUtils.toString(v.texcoord[1]));
 					arraycopy(v.position, 0, positionBuf, iV * 3, 3);
 					arraycopy(v.texcoord[0], 0, texBuf, iV * 2, 2);
 					arraycopy(v.texcoord[1], 0, lmBuf, iV * 2, 2);
@@ -125,8 +160,13 @@ public class RenderableMap {
 				Material mat =
 						new Material(assetManager,
 								"Common/MatDefs/Misc/Unshaded.j3md");
-				mat.setTexture("ColorMap", textures.get(face.texture));
-				mat.setTexture("LightMap", lightmaps.get(face.lm_index));
+				String shaderName = texNames.get(face.texture);
+				Shader shader = shaderLib.getShader(shaderName);
+				// TODO: loading default textures
+				mat.setTexture("ColorMap", shader == null ? nameToTex.values()
+						.iterator().next() : nameToTex.get(shader.texture));
+				mat.setTexture("LightMap", shader == null ? nameToLm.values()
+						.iterator().next() : nameToLm.get(shader.lightmap));
 				mat.setColor("Color", ColorRGBA.Gray);
 				mat.setBoolean("SeparateTexCoord", true);
 
